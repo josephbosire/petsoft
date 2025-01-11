@@ -1,28 +1,46 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import { Button } from "./ui/button";
 import { PlusIcon } from "@radix-ui/react-icons";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import PetForm from "./pet-form";
 
 type PetButtonProps = {
   actionType: "add" | "edit" | "checkout";
   children?: React.ReactNode;
+  onClick?: () => void;
 };
-const PetButton = ({ actionType, children }: PetButtonProps) => {
-  if (actionType === "add") {
+const PetButton = ({ actionType, onClick, children }: PetButtonProps) => {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  if (actionType === "checkout") {
     return (
-      <Button size="icon">
-        <PlusIcon className="h-6 w-6" />
+      <Button className="secondary" onClick={onClick}>
+        {children}
       </Button>
     );
   }
 
-  if (actionType === "edit") {
-    return <Button variant="secondary">{children}</Button>;
-  }
-
-  if (actionType === "checkout") {
-    return <Button className="secondary">{children}</Button>;
-  }
-  return <Button>children</Button>;
+  return (
+    <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+      <DialogTrigger asChild>
+        {actionType === "add" ? (
+          <Button size="icon" onClick={onClick}>
+            <PlusIcon className="h-6 w-6" />
+          </Button>
+        ) : (
+          <Button variant="secondary" onClick={onClick}>
+            {children}
+          </Button>
+        )}
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{actionType === "add" ? "Add a new pet" : "Edit Pet"}</DialogTitle>
+        </DialogHeader>
+        <PetForm actionType={actionType} onFormSubmission={() => setIsFormOpen(false)} />
+      </DialogContent>
+    </Dialog>
+  );
 };
 
 export default PetButton;
