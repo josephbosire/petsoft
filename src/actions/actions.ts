@@ -1,13 +1,12 @@
 "use server";
 
-import { DEFAULT_PET_IMAGE_URL } from "@/lib/const";
 import prisma from "@/lib/database";
-import { CreatePet } from "@/lib/types";
+import { PetEssentials } from "@/lib/types";
 import { sleep } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 
-export const addPet = async (pet: CreatePet) => {
-  await sleep(2000);
+export const addPet = async (pet: PetEssentials) => {
+  await sleep(1000);
   try {
     await prisma.pet.create({
       data: pet,
@@ -20,8 +19,8 @@ export const addPet = async (pet: CreatePet) => {
   revalidatePath("/app", "layout");
 };
 
-export const editPet = async (petId: string, newPetData: CreatePet) => {
-  await sleep(2000);
+export const editPet = async (petId: string, newPetData: PetEssentials) => {
+  await sleep(1000);
   try {
     await prisma.pet.update({
       data: newPetData,
@@ -38,7 +37,7 @@ export const editPet = async (petId: string, newPetData: CreatePet) => {
 };
 
 export const deletePet = async (petId: string) => {
-  await sleep(2000);
+  await sleep(1000);
   try {
     await prisma.pet.delete({
       where: {
