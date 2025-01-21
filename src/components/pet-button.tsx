@@ -4,17 +4,20 @@ import { Button } from "./ui/button";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import PetForm from "./pet-form";
+import { flushSync } from "react-dom";
 
 type PetButtonProps = {
   actionType: "add" | "edit" | "checkout";
+  isPending?: boolean;
   children?: React.ReactNode;
   onClick?: () => void;
+  disabled?: boolean;
 };
-const PetButton = ({ actionType, onClick, children }: PetButtonProps) => {
+const PetButton = ({ actionType, disabled, onClick, children }: PetButtonProps) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   if (actionType === "checkout") {
     return (
-      <Button className="secondary" onClick={onClick}>
+      <Button className="secondary" onClick={onClick} disabled={disabled}>
         {children}
       </Button>
     );
@@ -37,7 +40,12 @@ const PetButton = ({ actionType, onClick, children }: PetButtonProps) => {
         <DialogHeader>
           <DialogTitle>{actionType === "add" ? "Add a new pet" : "Edit Pet"}</DialogTitle>
         </DialogHeader>
-        <PetForm actionType={actionType} onFormSubmission={() => setIsFormOpen(false)} />
+        <PetForm
+          actionType={actionType}
+          onFormSubmission={() => {
+            flushSync(() => setIsFormOpen(false)); // Useful to unbatch state updates for things like closing modal while update continues
+          }}
+        />
       </DialogContent>
     </Dialog>
   );
